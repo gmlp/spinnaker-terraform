@@ -9,3 +9,7 @@ variable "node_asg_max_size" {
 variable "node_asg_min_size" {
   default = "3"
 }
+
+variable "cluster_name" {
+  default = "eks_cluster"
+}

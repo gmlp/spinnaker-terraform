@@ -2,3 +2,4 @@
 plan
 *.tfstate*
 app/target
+.config

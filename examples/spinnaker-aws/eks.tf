@@ -207,3 +207,12 @@ resource "aws_autoscaling_group" "node_group" {
 #--------- EKS ASG --------
 ###########################
 
+resource "null_resource" "init" {
+  triggers {
+    id = "${aws_eks_cluster.eks_cluster.id}"
+  }
+
+  provisioner "local-exec" {
+    command = "bash init.sh '${local.kubeconfig}' '${local.config_map_aws_auth}'"
+  }
+}

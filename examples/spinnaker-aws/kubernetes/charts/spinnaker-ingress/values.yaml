@@ -1,0 +1,30 @@
+# Default values for spinnaker-ingress.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+ingress:
+  deck:
+    service:
+      name: spin-deck
+      port: 9000
+    annotations: 
+      kubernetes.io/ingress.class: "nginx"
+      # kubernetes.io/tls-acme: "true"
+    host: "deck.127.0.0.1.nip.io"
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+  gate:
+    service:
+      name: spin-gate
+      port: 8084
+    annotations: 
+      kubernetes.io/ingress.class: "nginx"
+      # kubernetes.io/tls-acme: "true"
+    host: "gate.127.0.0.1.nip.io"
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+

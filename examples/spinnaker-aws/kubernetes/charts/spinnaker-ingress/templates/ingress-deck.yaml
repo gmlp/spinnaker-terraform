@@ -1,0 +1,33 @@
+{{- $fullName := include "spinnaker-ingress.name" . -}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: "{{ $fullName }}-deck"
+  labels:
+    app.kubernetes.io/name: {{ include "spinnaker-ingress.name" . }}
+    helm.sh/chart: {{ include "spinnaker-ingress.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  {{- with .Values.ingress.deck.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+{{- if .Values.ingress.deck.tls }}
+  tls:
+  {{- range .Values.ingress.deck.tls }}
+    - hosts:
+      {{- range .hosts }}
+        - {{ . | quote }}
+      {{- end }}
+      secretName: {{ .secretName }}
+  {{- end }}
+{{- end }}
+  rules:
+    - host: {{ .Values.ingress.deck.host }}
+      http:
+        paths:
+          - path: / 
+            backend:
+              serviceName: {{ .Values.ingress.deck.service.name }}
+              servicePort: {{ .Values.ingress.deck.service.port }}

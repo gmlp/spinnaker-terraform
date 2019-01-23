@@ -1,17 +1,17 @@
 #!/bin/bash
-######################################
-#
-#      This Script aims to: 
-#       - Initialize EKS cluster.
-#       - Install Ingress
-#       - Install Tiller
-#       - Create Spinnaker SA
-#
-######################################
+#######################################################
 
-KUBE_CONFIG=$1
-AWS_AUTH_CM=$2
-CONFIG_DIR="${PWD}/.config"
+#  This Script can be used to: 
+#   - Initialize EKS cluster.
+#   - Install Ingress
+#   - Install Tiller
+#   - Create Spinnaker SA
+
+#######################################################
+
+readonly KUBE_CONFIG=$1
+readonly AWS_AUTH_CM=$2
+readonly CONFIG_DIR="${PWD}/.config"
 
 mkdir -p "${CONFIG_DIR}"
 

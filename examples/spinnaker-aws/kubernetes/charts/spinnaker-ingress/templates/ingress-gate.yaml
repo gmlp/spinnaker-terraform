@@ -1,0 +1,33 @@
+{{- $fullName := include "spinnaker-ingress.name" . -}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: "{{ $fullName }}-gate"
+  labels:
+    app.kubernetes.io/name: {{ include "spinnaker-ingress.name" . }}
+    helm.sh/chart: {{ include "spinnaker-ingress.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  {{- with .Values.ingress.gate.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+{{- if .Values.ingress.gate.tls }}
+  tls:
+  {{- range .Values.ingress.gate.tls }}
+    - hosts:
+      {{- range .hosts }}
+        - {{ . | quote }}
+      {{- end }}
+      secretName: {{ .secretName }}
+  {{- end }}
+{{- end }}
+  rules:
+    - host: {{ .Values.ingress.gate.host }}
+      http:
+        paths:
+          - path: / 
+            backend:
+              serviceName: {{ .Values.ingress.gate.service.name }}
+              servicePort: {{ .Values.ingress.gate.service.port }}

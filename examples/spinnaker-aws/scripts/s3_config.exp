@@ -1,0 +1,24 @@
+#!/usr/bin/env expect
+#######################################################
+
+#  This Script can be used to: 
+#   - configure Spinnaker external storage credentials.
+#   Notes: currently you cannot provide secrect access
+#         key as an argument
+
+#######################################################
+
+
+# Now we set variables in expect, note: [lrange $argv 0 0 =$1 the first parameter, and so on.
+set bucket [lrange $argv 0 0] 
+set access_key_id [lrange $argv 1 1] 
+set secret_access_key [lrange $argv 2 2] 
+
+spawn hal config storage s3 edit \
+    --bucket=$bucket \
+    --access-key-id $access_key_id \
+    --secret-access-key \
+    --region us-east-1 
+
+expect "Your AWS Secret Key.:" { send "$secret_access_key\n" }
+interact

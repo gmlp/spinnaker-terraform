@@ -17,10 +17,45 @@
 readonly BUCKET=$1
 readonly ACCESS_KEY_ID=$2
 readonly SECRET_ACCESS_KEY=$3
+readonly MODULE_PATH=$4
 readonly CONFIG_DIR="${PWD}/.config"
 readonly SPINNAKER_HOME="/home/spinnaker"
 
 export KUBECONFIG="${CONFIG_DIR}/kubeconfig"
+
+##################
+# Spinnaker SA
+##################
+
+CONTEXT=$(kubectl config current-context)
+
+# This service account uses the ClusterAdmin role -- this is not necessary,
+# more restrictive roles can by applied.
+kubectl apply --context "${CONTEXT}" \
+    -f https://spinnaker.io/downloads/kubernetes/service-account.yml
+
+
+SECRET_NAME=$(kubectl get serviceaccount spinnaker-service-account \
+       --context "${CONTEXT}" \
+       -n spinnaker \
+       -o jsonpath='{.secrets[0].name}')
+
+TOKEN=$(kubectl get secret --context "$CONTEXT" \
+    "${SECRET_NAME}" \
+   -n spinnaker \
+   -o jsonpath='{.data.token}' | base64 --decode)
+
+kubectl config set-credentials "${CONTEXT}-token-user" --token "${TOKEN}"
+
+kubectl config set-context "${CONTEXT}" --user "${CONTEXT}-token-user"
+
+##################
+# Spinnaker SA
+##################
+
+##################
+# Spinnaker Init 
+##################
 
 docker run -d  \
     --name halyard --rm \
@@ -34,13 +69,13 @@ docker exec halyard mkdir "${SPINNAKER_HOME}/.aws"
 #       - use aws cli utility to pass eks credentials
 #       - credentials are passed directly
 #       *** credentials file must exist ****
-docker cp .config/credentials "halyard:${SPINNAKER_HOME}/.aws"
+docker cp "${CONFIG_DIR}/credentials" "halyard:${SPINNAKER_HOME}/.aws"
 docker cp "$KUBECONFIG" "halyard:${SPINNAKER_HOME}/.kube/config"
 
 # Copy Scripts
-docker cp scripts/hal_config.sh "halyard:${SPINNAKER_HOME}/hal_config.sh"
-docker cp scripts/s3_config.exp "halyard:${SPINNAKER_HOME}/s3_config.exp"
-docker cp scripts/deploy.sh "halyard:${SPINNAKER_HOME}/deploy.sh"
+docker cp "${MODULE_PATH}/scripts/hal_config.sh" "halyard:${SPINNAKER_HOME}/hal_config.sh"
+docker cp "${MODULE_PATH}/scripts/s3_config.exp" "halyard:${SPINNAKER_HOME}/s3_config.exp"
+docker cp "${MODULE_PATH}/scripts/deploy.sh" "halyard:${SPINNAKER_HOME}/deploy.sh"
 
 docker exec -u root halyard chown -R spinnaker:spinnaker "${SPINNAKER_HOME}"
 
@@ -71,4 +106,4 @@ helm upgrade -i spinnaker-ingress \
  --namespace spinnaker \
  --set ingress.deck.host="${DECK_HOST}" \
  --set ingress.gate.host="${GATE_HOST}" \
- kubernetes/charts/spinnaker-ingress
+ "${MODULE_PATH}/kubernetes/charts/spinnaker-ingress"

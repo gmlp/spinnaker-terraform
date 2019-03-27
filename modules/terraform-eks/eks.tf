@@ -213,10 +213,10 @@ resource "null_resource" "init" {
   }
 
   provisioner "local-exec" {
-    command = "bash scripts/init.sh '${local.kubeconfig}' '${local.config_map_aws_auth}'"
+    command = "bash ${path.module}/scripts/init.sh '${local.kubeconfig}' '${local.config_map_aws_auth}' '${path.module}'"
   }
 
   provisioner "local-exec" {
-    command = "bash scripts/spinnaker_init.sh '${aws_s3_bucket.spinnaker_external_storage.bucket}' '${aws_iam_access_key.spinnaker_s3_user_keys.id}' '${aws_iam_access_key.spinnaker_s3_user_keys.secret}'"
+    command = "bash ${path.module}/scripts/spinnaker_init.sh '${aws_s3_bucket.spinnaker_external_storage.bucket}' '${aws_iam_access_key.spinnaker_s3_user_keys.id}' '${aws_iam_access_key.spinnaker_s3_user_keys.secret}' '${path.module}'"
   }
 }

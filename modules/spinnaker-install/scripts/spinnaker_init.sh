@@ -23,6 +23,12 @@ readonly SPINNAKER_HOME="/home/spinnaker"
 
 export KUBECONFIG="${CONFIG_DIR}/kubeconfig"
 
+until kubectl get nodes
+do
+    echo "Cluster is not yet ready. Sleeping for a while..."
+    sleep 30
+done
+
 ##################
 # Spinnaker SA
 ##################
@@ -99,6 +105,9 @@ LB_IP="$(dig +short $LB_HOST \
 DECK_HOST="deck.${LB_IP}.nip.io"
 GATE_HOST="gate.${LB_IP}.nip.io"
 PROTOCOL="http"
+
+kubectl -n kube-system \
+    rollout status deploy tiller-deploy
 
 docker exec halyard bash "${SPINNAKER_HOME}/deploy.sh" "${DECK_HOST}" "${GATE_HOST}" "${PROTOCOL}"
 

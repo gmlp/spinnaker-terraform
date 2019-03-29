@@ -14,3 +14,8 @@ variable "s3_bucket_secret_key" {
   default =""
 }
 
+variable "kubeconfig" {
+  default ="" 
+}
+
+

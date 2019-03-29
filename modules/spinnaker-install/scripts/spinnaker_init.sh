@@ -18,10 +18,10 @@ readonly BUCKET=$1
 readonly ACCESS_KEY_ID=$2
 readonly SECRET_ACCESS_KEY=$3
 readonly MODULE_PATH=$4
-readonly CONFIG_DIR="${PWD}/.config"
+readonly KUBECONFIG=$5
 readonly SPINNAKER_HOME="/home/spinnaker"
+readonly CONFIG_DIR="${PWD}/.config"
 
-export KUBECONFIG="${CONFIG_DIR}/kubeconfig"
 
 until kubectl get nodes
 do

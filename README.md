@@ -3,6 +3,8 @@ Spinnaker Terraform
 
 This projects contains a set of modules in the modules folder for deploying a production grade Spinnaker on a Kubernetes cluster using halyart.
 
+![Pipeline](/_docs/terraform-spinnaker.png?raw=true)
+
 Suported k8s Flavors.
 
 * EKS

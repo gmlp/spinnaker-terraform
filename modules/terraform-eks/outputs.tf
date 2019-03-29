@@ -54,3 +54,20 @@ output "config_map_aws_auth" {
 output "kubeconfig" {
   value = "${local.kubeconfig}"
 }
+
+output "cluster_id" {
+  value = "${aws_eks_cluster.eks_cluster.id}"
+}
+
+output "s3_bucket" {
+  value = "${aws_s3_bucket.spinnaker_external_storage.bucket}"
+}
+
+output "s3_bucket_key_id" {
+  value = "${aws_iam_access_key.spinnaker_s3_user_keys.id}"
+}
+
+output "s3_bucket_secret_key" {
+  value = "${aws_iam_access_key.spinnaker_s3_user_keys.secret}"
+}
+
